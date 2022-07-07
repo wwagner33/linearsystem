@@ -24,7 +24,7 @@ Al = horzcat([A;C;zeros(1,3)],zeros(5,2));
 %Montar a matrix Bl - sistema aumentado [B 0]
 Bl = [B;zeros(2,1)];
 
-
+%Nao funcionou
 
 %Montar a Matriz F
 F=[-2 -2 0 0 0;2 -2 0 0 0;0 0 -8 0 0;0 0 0 -4 -4;0 0 0 4 -4];
