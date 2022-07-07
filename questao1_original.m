@@ -8,14 +8,14 @@
 clear all; close all;  clc;
 
 s = sym('s');
-gs = (s^2 + s + 1) / (s^4 + s^3 + 2 * s^2 - 2);
+go = (s^2 + s + 1) / (s^4 + s^3 + 2 * s^2 - 2);
 
 % extraido de gs
-a = [1 1 2 -2];
-b = [1 1 1];
+d = [1 1 2 -2]; %denominador
+n = [1 1 1]; %numerador
 
 % converte para representacao state-space
-[A, B, C, D] = tf2ss(b, a);
+[A, B, C, D] = tf2ss(n, d);
 
 % polinomio caracteristico = det(si - A)
 lambda = sym('lambda');
