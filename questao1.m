@@ -20,29 +20,47 @@ pc = det(si - A);
 
 % matrix de controlabilidade
 Co = ctrb(A,B);
-
 % num estados nao controlaveis
-nc = length(A) - rank(Co); % controlavel
+nc = length(A) - rank(Co); % 0 -> controlavel
 
-[Abar,Bbar,Cbar,P,k] = ctrbf(A,B,C);
-pole = eig(A);
+% matriz de observabilidade
+Obs = obsv(A,C);
+no = length(A) - rank(Obs); % 0 -> observável
 
-% polos desejados
-% separando de 3 em 3 pois usando 5 polos precisaria ter 5 linhas em A
+% [Abar,Bbar,Cbar,P,k] = ctrbf(A,B,C);
 
-newpole1 = [-2+2*i -2-2*i -8];
-k1 = place(A,B,newpole1); % atribuicao de polo malha fechada com realim estado
-Acl1 = A - B*k1;
-Ecl1 = eig(Acl1);
+% polos desejados - sistema aumentado
 
-newpole2 = [-4+4*i -4-4*i -8];
-k2 = place(A,B,newpole2); % atribuicao de polo malha fechada com realim estado
-Acl2 = A - B*k2;
-Ecl2 = eig(Acl2);
+Al = [A zeros(length(A),1);-C 0]; % horzcat([A;C;zeros(1,3)],zeros(5,2)); % [A zeros(length(A),2);-C 0 0;0 0 0 0 0]
+Bl = [B;0];
+Cl = [C 0];
+El = [zeros(length(A),1);1];
+newpoles = [-2+2*i -2-2*i -4+4*i -4-4*i];
+k = place(Al,Bl,newpoles);
+% malha fechada com realim estado
+Acl = Al - Bl*k;
+Ecl = eig(Acl);
+
+N = inv(Cl*inv(-Acl+Bl*k)*Bl);
 
 % polinomio caracteristico desejado
 %pck = (s+8)*(s+2+2*j)*(s+2-2*j)*(s+4+4*j)*(s+4-4*j);
 
-% sistema fechado com conj de polos 1 e 2
-syscl1 = ss(Acl1,B,C,D);
-syscl2 = ss(Acl2,B,C,D);
+% sistema aberto
+sysop = ss(Al,Bl,Cl,D);
+
+% sistema fechado com realimentacao
+syscl = ss(Acl,Bl,Cl,D);
+
+figure(1)
+step(tf(sysop))
+figure(2)
+step(tf(syscl))
+
+figure(3)
+hold on
+axis
+plot(eig(A),'o','color','b')
+plot(eig(Acl),'*','color','r')
+
+
