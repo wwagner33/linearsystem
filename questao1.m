@@ -16,7 +16,7 @@ r=1;
 % polinomio caracteristico: det(si - A)
 lambda = sym('lambda');
 si = [lambda 0 0;0 lambda 0;0 0 lambda];
-pc = det(si - A);
+pol = det(si - A);
 
 % matrix de controlabilidade
 Co = ctrb(A,B);
@@ -41,7 +41,7 @@ k = place(Al,Bl,newpoles);
 Acl = Al - Bl*k;
 Ecl = eig(Acl);
 
-N = inv(Cl*inv(-Acl+Bl*k)*Bl);
+%N = inv(Cl*inv(-Acl+Bl*k)*Bl);
 
 % polinomio caracteristico desejado
 %pck = (s+8)*(s+2+2*j)*(s+2-2*j)*(s+4+4*j)*(s+4-4*j);
