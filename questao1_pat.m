@@ -31,13 +31,6 @@ no = length(A) - rank(Obs); % 0 -> observável
 si = [s 0 0;0 s 0;0 0 s];
 polc = det(si - A);
 
-% polinomio caracteristico com polos desejados (aumentado)
-polck = (s+2+2*i)*(s+2-2*i)*(s+4+4*i)*(s+4-4*i);
-
-% calculando Kbarrado
-Kbar = sym2poly(polck)-[0 sym2poly(polc)]; % polc nao tem s4, por isso coloco 0*s4
-Kbar = Kbar(2:5);
-
 % polos desejados - eq estado aumentado
 Aa = [A zeros(length(A),1);-C 0]; % horzcat([A;C;zeros(1,3)],zeros(5,2));
 Ba = [B;0];
@@ -46,11 +39,17 @@ Ea = [zeros(length(A),1);1];
 Coa = ctrb(Aa,Ba); % = [Ba Aa*Ba Aa^2*Ba Aa^3*Ba];
 Obsa = obsv(Aa,Ca);
 
-[Aabar,Babar,Cabar,P,k] = ctrbf(Aa,Ba,Ca);
-Cobar = [Babar Aa*Babar Aa^2*Babar Aa^3*Babar];
-Ka = Kbar*Cobar*inv(Coa);
+% polinomio caracteristico com polos desejados (aumentado)
+%polck = (s+2+2*i)*(s+2-2*i)*(s+4+4*i)*(s+4-4*i);
+% calculando Kbarrado
+%Kbar = sym2poly(polck)-[0 sym2poly(polc)]; % polc nao tem s4, por isso coloco 0*s4
+%Kbar = Kbar(2:5);
+
+%[Aabar,Babar,Cabar,P,k] = ctrbf(Aa,Ba,Ca);
+%Cobar = [Babar Aa*Babar Aa^2*Babar Aa^3*Babar];
+%Ka = Kbar*Cobar*inv(Coa);
 %K = Ka(1:3);
-Kz = Ka(4);
+%Kz = Ka(4);
 
 % K com polos desejados
 newpoles = [-2+2*i -2-2*i -4+4*i -4-4*i];
@@ -67,6 +66,12 @@ Ecl = eig(Acl);
 % sistema fechado com realimentacao
 syscl = ss(Acl,Ba,Ca,D);
 
+% estimador
+Pe = [-8 -8 -8];
+L = acker(A',C',Pe);
+L = L';
+Alc = A - L * C;
+
 figure(1);
 subplot(211);
 step(sysop);
@@ -82,3 +87,9 @@ axis;
 plot(eig(A),'o','color','b');
 plot(eig(Acl),'*','color','r');
 title('Polos Malha Aberta [o] e Fechada [*]');
+
+% tempo
+t = -0.5:0.5:8;
+ref =  [0 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1];
+%figure(3);
+%plot(t,ref);
