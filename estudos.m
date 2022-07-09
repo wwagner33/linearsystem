@@ -32,6 +32,7 @@ Ka = place(Aa,Ba,poles_d);
 
 poles=pole(sys);
 K=place(A,B,poles);
+Kz=1;
 
 %Sistema em Malha Fechada
 Ac = Aa-Ba*Ka;
