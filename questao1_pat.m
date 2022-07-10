@@ -1,6 +1,6 @@
 clear all; close all;  clc; 
-
 s = sym('s');
+
 gs = (s^2+s+1)/(s^4+s^3+2*s^2-2);
 
 % extraido de gs

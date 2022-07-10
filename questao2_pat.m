@@ -1,5 +1,4 @@
 clear all; close all;  clc; 
-
 s = sym('s');
 
 A = [1 2 0; -1 -1 -1; 0 2 -1];
@@ -12,8 +11,6 @@ sysop = ss(A, B, C, D);
 [n,d] = tfdata(sysop);
 
 x0 = [1; -1; 1];
-
-% poles = eig(A);
 
 % matrix de controlabilidade
 Co = ctrb(A,B);
@@ -30,7 +27,6 @@ polc = det(si - A);
 
 % polos desejados
 newpoles = [-1.5+i -1.5-i -2];
-%K = place(A,B,newpoles);
 
 % observador
 Pe = [-5+5*j -5-5*j -8];
@@ -38,6 +34,7 @@ L = place(A',C',Pe);
 L = L';
 Alc = A - L * C;
 
+% LQR
 Q = eye(3)+1.8;
 R = 1;
 K = lqr(A, B, Q, R);
@@ -47,8 +44,7 @@ syscl = ss(Acl, B, C, D);
 
 N = -1/(C*inv(Acl-B*K)*B);
 
-[Y, T, X] = initial(syscl, x0);
-%u = K*x0;
+%[Y, T, X] = initial(syscl, x0);
 
 figure(1);
 hold all;
