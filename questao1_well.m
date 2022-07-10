@@ -16,15 +16,9 @@ n = [1 1 1]; %numerador - polinomio minimo (?)
 [A, B, C, D] = tf2ss(n, d);
 sys = tf(n,d);
 
-cp = charpoly(A);%polinomio caracteristico do sistema
+cp = charpoly(A);%polinomio caracteristico do sistema - retorna os coeficientes
 
 CM = ctrb(A,B); %calcula Matriz de Controlabilidade
-
-% if (eq(rank(CM),length(A)) == 1) %testa controlabilidade
-%     "Sistema é Controlável"
-% else
-%     "Sistema não é controlável"
-% end
 
 % define planta aumentada
 tempAa = [A;-C];
@@ -42,12 +36,18 @@ Ka = place(Aa,Ba,dp);
 K=Ka(1:3);
 Kz=Ka(4);
 
-%definicao do disturbio na entrada
-d_i=1;
 
-% 
-% %projeta estimador de estado
-% 
-% q = -8;
-% 
-% L = place(A',C',q);
+%projeta estimador de estado
+
+%teste de observabilidade
+Ob = obsv(A,C);
+unob = length(A)-rank(Ob); %resulta em 0 (zero), ou seja, nao possui estados nao observaveis
+
+CM_dual_bar = inv([1 0 cp(2);0 1 0;0 0 1]);
+
+q=[-2+2j -2-2j -8]; %A-L'*C
+
+L = place(A',C',q).'; %calcula o ganho de Pole Placement usando a formula de Ackermann
+
+ALC = A-L*C;
+
