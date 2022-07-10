@@ -38,7 +38,7 @@ L = place(A',C',Pe);
 L = L';
 Alc = A - L * C;
 
-Q = eye(3)+1.8;
+Q = eye(3)+0.9;
 R = 1;
 K = lqr(A, B, Q, R);
 
