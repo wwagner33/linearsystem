@@ -30,12 +30,7 @@ polc = det(si - A);
 
 % polos desejados
 newpoles = [-1.5+i -1.5-i -2];
-K = place(A,B,newpoles);
-
-% malha fechada com realim estado
-Acl = A - B*K;
-Ecl = eig(Acl);
-syscl = ss(Acl, B, C, D);
+%K = place(A,B,newpoles);
 
 % observador
 Pe = [-5+5*j -5-5*j -8];
@@ -43,8 +38,21 @@ L = place(A',C',Pe);
 L = L';
 Alc = A - L * C;
 
-N = -1/(C*inv(A-B*K)*B);
-%Q = 
+Q = eye(3)+1.8;
+R = 1;
+K = lqr(A, B, Q, R);
+
+Acl = A - B*K;
+syscl = ss(Acl, B, C, D);
+
+N = -1/(C*inv(Acl-B*K)*B);
+
+[Y, T, X] = initial(syscl, x0);
+%u = K*x0;
+
+figure(1);
+hold all;
+pzmap(syscl);
 
 % sistema fechado com realimentacao
 %syscl = ss(Acl,Ba,Ca,D);
@@ -61,10 +69,10 @@ N = -1/(C*inv(A-B*K)*B);
 %K = Ka(1:3);
 %Kz = Ka(4);
 
-figure;
-subplot(211);
-step(sysop);
-title('Resposta Malha Aberta');
-subplot(212);
-step(syscl);
-title('Resposta Malha Fechada');
+%figure(2);
+%subplot(211);
+%step(sysop);
+%title('Resposta Malha Aberta');
+%subplot(212);
+%step(syscl);
+%title('Resposta Malha Fechada');
